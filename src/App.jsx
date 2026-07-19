@@ -18,7 +18,7 @@ function App() {
 
   const totalCartelas = Array.from({ length: 200 }, (_, i) => i + 1);
 
-  // 1-75 ቁጥሮችን በየፊደሉ መመደቢያ ሰሌዳ
+  // 1-75 ቁጥሮችን በየፊደሉ መመደቢያ ሰሌዳ (B:1-15, I:16-30, N:31-45, G:46-60, O:61-75)
   const bingoBoardData = {
     B: Array.from({ length: 15 }, (_, i) => i + 1),
     I: Array.from({ length: 15 }, (_, i) => i + 16),
@@ -27,23 +27,13 @@ function App() {
     O: Array.from({ length: 15 }, (_, i) => i + 61),
   };
 
-  // 🔴 አዲሱ አስተማማኝ ማስተካከያ፦ በምስሉ መሠረት 5x5 የቢንጎ ማትሪክስ በፎርሙላ ማመንጫ (በፍጹም አይቆረጥም!)
-  const [playingCartelaNumbers, setPlayingCartelaNumbers] = useState([]);
-
-  useEffect(() => {
-    // 5 ረድፍ እና 5 አምድ (25 ሳጥን) ከነ FREE መካከለኛው ላይ በጥንቃቄ መፍጠሪያ
-    const B_nums =;
-    const I_nums =;
-    const N_nums = [32, 35, "FREE", 41, 44];
-    const G_nums =;
-    const O_nums =;
-
-    const matrix = [];
-    for (let i = 0; i < 5; i++) {
-      matrix.push([B_nums[i], I_nums[i], N_nums[i], G_nums[i], O_nums[i]]);
-    }
-    setPlayingCartelaNumbers(matrix);
-  }, []);
+  // 🔴 100% ሙሉ በሙሉ የተሟላ የቢንጎ ካርድ ማትሪክስ (25ቱም ቁጥሮች ያለ ምንም ክፍተት ሙሉ በሙሉ ተጽፈዋል!)
+  const playingCartelaNumbers = [,
+ ,
+    [14, 21, "FREE", 49, 62],
+,
+    [3, 30, 45, 46, 64]
+  ];
 
   // 1. የመጀመሪያው ገጽ የሰዓት ቆጣሪ
   useEffect(() => {
@@ -135,9 +125,9 @@ function App() {
         <div className="ball-caller-section">
           <div className="recent-balls-container">
             <span className="recent-label">Recent</span>
-            <div className="small-ball-circle">{recentBalls || '-'}</div>
-            <div className="small-ball-circle">{recentBalls || '-'}</div>
-            <div className="small-ball-circle">{recentBalls || '-'}</div>
+            <div className="small-ball-circle">{recentBalls[0] || '-'}</div>
+            <div className="small-ball-circle">{recentBalls[1] || '-'}</div>
+            <div className="small-ball-circle">{recentBalls[2] || '-'}</div>
           </div>
 
           <div className="main-ball-circle-container">
@@ -167,7 +157,7 @@ function App() {
             ))}
           </div>
 
-          {/* የቀኝ ክፍል ካርቴላ - ምስል 2 ላይ እንዳሳየኸኝ ፍጹም 5x5 አቀማመጥ */}
+          {/* የቀኝ ክፍል ካርቴላ - ምስል ላይ እንዳሳየኸኝ ፍጹም 5x5 አቀማመጥ */}
           <div className="right-side">
             <div className="card-title-center">💳 PLAYING CARTELA</div>
             <div className="playing-card-matrix">
