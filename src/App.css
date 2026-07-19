@@ -21,16 +21,29 @@ body {
     flex-direction: column;
 }
 
-.main-title-777 {
+/* 🎰 አዲሱ ኮከብ የሌለው የጌም መብራት ርዕስ (Neon Glow Design) */
+.main-title-neon {
     text-align: center;
-    font-size: 24px;
+    font-size: 32px;
     font-weight: 900;
-    color: #ffcc00;
-    text-shadow: 0 0 12px #ff3399, 0 0 4px #00ffff;
-    margin-bottom: 15px;
+    color: #ffffff;
+    margin-bottom: 20px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-shadow: 0 0 5px #fff, 0 0 10px #ff3399, 0 0 20px #ff3399, 0 0 40px #ff3399;
+    animation: neonPulse 2.5s ease-in-out infinite alternate;
 }
 
-/* 🔴 አዲሱ የግራና ቀኝ የጎንዮሽ አቀማመጥ (Split Flex Layout) */
+@keyframes neonPulse {
+    from {
+        text-shadow: 0 0 5px #fff, 0 0 10px #ff3399, 0 0 20px #ff3399, 0 0 30px #ff3399;
+    }
+    to {
+        text-shadow: 0 0 10px #fff, 0 0 20px #00ffff, 0 0 30px #00ffff, 0 0 50px #00ffff;
+    }
+}
+
+/* የግራና ቀኝ የጎንዮሽ አቀማመጥ (Split Flex Layout) */
 .game-split-layout {
     display: flex;
     gap: 12px;
@@ -39,13 +52,8 @@ body {
     align-items: flex-start;
 }
 
-.left-side {
-    flex: 1; /* የ1-75 ቁጥሮች ሰሌዳ የሚቀመጥበት የግራ ጎን */
-}
-
-.right-side {
-    flex: 1.4; /* የካርቴላው ሳጥን ሰፊ ቦታ እንዲያገኝ የቀኝ ጎን */
-}
+.left-side { flex: 1; }
+.right-side { flex: 1.4; }
 
 /* Top Info Grid */
 .top-info-grid {
@@ -111,7 +119,7 @@ body {
     box-shadow: 0 0 10px #00ffff;
 }
 
-/* 💳 Playing Cartela (ቀኝ ክፍል) */
+/* Playing Cartela (ቀኝ ክፍል) */
 .card-title-center { font-size: 12px; color: #ffcc00; margin-bottom: 6px; text-align: center; font-weight: bold; }
 .playing-card-matrix {
     display: grid;
@@ -140,7 +148,7 @@ body {
 .matrix-cell.free-cell { background-color: #ff00ff; font-size: 9px; }
 .matrix-cell.hit { background-color: #00ffff !important; color: #0b0214 !important; font-weight: 900; }
 
-/* 🔢 የቢንጎ ሙሉ ሰሌዳ (ግራ ክፍል በአምድ መልክ የተደረደረ) */
+/* የቢንጎ ሙሉ ሰሌዳ (B-I-N-G-O ሰሌዳ) */
 .bingo-board-container {
     background-color: #061624;
     border: 1px solid #1a3a5c;
@@ -180,7 +188,7 @@ body {
 }
 
 /* ========================================== */
-/* 🟢 የመጀመሪያው ገጽ የቦታ መጠን መጨመሪያ (Page 1 Scale) */
+/* የመጀመሪያው ገጽ የቦታ መጠን መጨመሪያ (Page 1 Scale) */
 /* ========================================== */
 .page-one-scaled { padding: 25px 15px; }
 .top-info-grid-p1 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 25px; }
