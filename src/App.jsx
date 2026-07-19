@@ -7,7 +7,9 @@ function App() {
   const [bet, setBet] = useState(10); 
   const [timer, setTimer] = useState(30); 
   const [soldCount, setSoldCount] = useState(88); 
-  const [mySlots, setMySlots] = useState([]); 
+  
+  // 🔴 ማስተካከያ 1፦ ተጫዋቹ መምረጥ ያለበት አንድ ካርቴላ ብቻ ስለሆነ ከArray ወደ ነጠላ ቁጥር (null) ተቀይሯል
+  const [mySlot, setMySlot] = useState(null); 
   const [gameStarted, setGameStarted] = useState(false); 
 
   // --- የሁለተኛው ገጽ ጨዋታ መረጃዎች (States) ---
@@ -18,7 +20,6 @@ function App() {
 
   const totalCartelas = Array.from({ length: 200 }, (_, i) => i + 1);
 
-  // 1-75 ቁጥሮችን በየፊደሉ መመደቢያ ሰሌዳ
   const bingoBoardData = {
     B: Array.from({ length: 15 }, (_, i) => i + 1),
     I: Array.from({ length: 15 }, (_, i) => i + 16),
@@ -27,14 +28,13 @@ function App() {
     O: Array.from({ length: 15 }, (_, i) => i + 61),
   };
 
-  // 🔴 ፎርሙላ ማስተካከያ፡ 5x5 ማትሪክስ በፎርሙላ ማመንጫ (በፍጹም አይቆረጥም!)
+  // 5x5 የቢንጎ ጨዋታ ማትሪክስ (ቁጥሮቹ ሙሉ በሙሉ በ loop ውስጥ እንዲፈጠሩ ተደርገዋል)
   const [playingCartelaNumbers, setPlayingCartelaNumbers] = useState([]);
 
   useEffect(() => {
-    // ለእያንዳንዱ አምድ 5 ሙሉ ቁጥሮችን መመደብ
     const B_column =;
     const I_column =;
-    const N_column = [31, 34, "FREE", 40, 43]; // መካከለኛው FREE ነው
+    const N_column = [35, 42, "FREE", 38, 44];
     const G_column =;
     const O_column =;
 
@@ -58,7 +58,7 @@ function App() {
     }
   }, [timer, gameStarted]);
 
-  // 2. የሁለተኛው ገጽ አውቶማቲክ የቢንጎ ቁጥሮች ማውጫ (በየ 4 ሰከንዱ)
+  // 2. የሁለተኛው ገጽ ቁጥሮች ማውጫ
   useEffect(() => {
     if (!isPlaying) return;
 
@@ -99,10 +99,18 @@ function App() {
   const rawPrize = soldCount * 10;
   const netPrize = rawPrize - (rawPrize * 0.20);
 
+  // 🔴 ማስተካከያ 2፦ አንድ ካርቴላ ብቻ እንዲመርጥ የሚያደርግ አዲስ የተስተካከለ ፈንክሽን
   const handleSelectCartela = (num) => {
-    if (mySlots.includes(num)) return;
+    // ቀድሞ የተመረጠ ካርቴላ ካለ፣ ገንዘቡን መጀመሪያ እንመልሳለን (Balance Reversion)
+    if (mySlot !== null) {
+      setBalance((prev) => prev + bet);
+      setSoldCount((prev) => prev - 1);
+    }
+
+    // አዲሱን ምርጫ ብቻ እንይዛለን
     if (balance >= bet) {
-      setMySlots([...mySlots, num]);
+      setMySlot(num); // አንድ ቁጥር ብቻ ይተካል!
+      setSoldCount((prev) => prev + 1);
       setBalance((prev) => prev - bet);
     } else {
       alert("በቂ ሂሳብ የሎዎትም!");
@@ -110,12 +118,13 @@ function App() {
   };
 
   // ==========================================
-  // 🔵 ገጽ 2፦ የጨዋታው ሜዳ (GAME BOARD) - 5x5 ማትሪክስ ያለው
+  // 🔵 ገጽ 2፦ የጨዋታው ሜዳ (GAME BOARD)
   // ==========================================
   if (gameStarted) {
     return (
       <div className="app-container">
-        <h1 className="main-title">ላዝ ቢንጎ</h1>
+        {/* 🎰 Game Effect ያለበት ርዕስ */}
+        <h1 className="main-title glow-effect">ላዝ ቢንጎ</h1>
 
         <div className="top-info-grid">
           <div className="info-box border-magenta">
@@ -148,7 +157,6 @@ function App() {
         </div>
 
         <div className="game-split-layout">
-          {/* የግራ ክፍል ሰሌዳ */}
           <div className="bingo-board-container left-side">
             {Object.entries(bingoBoardData).map(([letter, numbers]) => (
               <div key={letter} className="board-row">
@@ -167,9 +175,8 @@ function App() {
             ))}
           </div>
 
-          {/* የቀኝ ክፍል ካርቴላ - 5x5 አቀማመጥ */}
           <div className="right-side">
-            <div className="card-title-center">💳 PLAYING CARTELA</div>
+            <div className="card-title-center">💳 PLAYING CARTELA {mySlot && `(#${mySlot})`}</div>
             <div className="playing-card-matrix">
               {['B', 'I', 'N', 'G', 'O'].map(letter => (
                 <div key={letter} className="matrix-header">{letter}</div>
@@ -200,7 +207,8 @@ function App() {
   // ==========================================
   return (
     <div className="app-container page-one-scaled">
-      <h1 className="main-title">ላዝ ቢንጎ</h1>
+      {/* 🎰 Game Effect ያለበት ርዕስ */}
+      <h1 className="main-title glow-effect">ላዝ ቢንጎ</h1>
 
       <div className="top-info-grid-p1">
         <div className="info-box-p1">
@@ -224,8 +232,8 @@ function App() {
       <div className="your-slot-container-p1">
         <span className="slot-title-p1">YOUR SLOT</span>
         <div className="slot-box-p1">
-          {mySlots.length > 0 ? (
-            mySlots.map(num => <span key={num} className="selected-tag-p1">#{num}</span>)
+          {mySlot !== null ? (
+            <span className="selected-tag-p1">#{mySlot}</span>
           ) : (
             <span className="placeholder-text-p1">+ ካርቴላ ይምረጡ</span>
           )}
@@ -235,7 +243,7 @@ function App() {
       <div className="selector-title-p1">ካርቴላ ይምረጡ (1 - 200)</div>
       <div className="cartela-grid-p1">
         {totalCartelas.map((num) => {
-          const isMine = mySlots.includes(num);
+          const isMine = mySlot === num; // አንድ ቁጥር ብቻ ነው እውነት የሚሆነው
           return (
             <button
               key={num}
