@@ -2,24 +2,29 @@ import React, { useState, useEffect } from 'react';
 import './App.css';
 
 function App() {
-  // --- የመጀመሪያው ገጽ መረጃዎች (States) ---
+  // --- 🟢 ገጽ 1፦ በታማኝነት የተቀመጡ መረጃዎች ---
   const [balance, setBalance] = useState(500); 
   const [bet, setBet] = useState(10); 
   const [timer, setTimer] = useState(30); 
   const [soldCount, setSoldCount] = useState(88); 
-  
-  // አንድ ካርቴላ ብቻ ለመቆጣጠሪያ (null ማለት ገና አልተመረጠም)
   const [mySlot, setMySlot] = useState(null); 
   const [gameStarted, setGameStarted] = useState(false); 
 
-  // --- የሁለተኛው ገጽ ጨዋታ መረጃዎች (States) ---
+  // --- 🔵 ገጽ 2፦ የጨዋታው ሜዳ መረጃዎች ---
   const [calledBalls, setCalledBalls] = useState([]); 
   const [currentBall, setCurrentBall] = useState(null); 
   const [recentBalls, setRecentBalls] = useState([]); 
   const [isPlaying, setIsPlaying] = useState(false);
+  
+  // ተጫዋቹ የነካቸውን ቁጥሮች መቆጣጠሪያ
+  const [userHits, setUserHits] = useState(["FREE"]); 
+  // የተሳሳቱ ሙከራዎችን መቁጠሪያ (Strikes)
+  const [wrongAttempts, setWrongAttempts] = useState(0);
+  const [isBanned, setIsBanned] = useState(false); 
 
   const totalCartelas = Array.from({ length: 200 }, (_, i) => i + 1);
 
+  // 1-75 ቁጥሮችን በየፊደሉ መመደቢያ (B:1-15, I:16-30, N:31-45, G:46-60, O:61-75)
   const bingoBoardData = {
     B: Array.from({ length: 15 }, (_, i) => i + 1),
     I: Array.from({ length: 15 }, (_, i) => i + 16),
@@ -28,12 +33,12 @@ function App() {
     O: Array.from({ length: 15 }, (_, i) => i + 61),
   };
 
-  // 🔴 100% ሙሉ በሙሉ የተሟላ ባለ 5 ረድፍ የቢንጎ ማትሪክስ (25ቱም ቁጥሮች ያለ ምንም ክፍተት ተጽፈዋል!)
+  // 🔴 100% ሙሉ በሙሉ የተሟላ የቢንጎ ካርድ ማትሪክስ (25ቱም ሳጥኖች አንድም ሳይጎድል ተጽፈዋል!)
   const playingCartelaNumbers = [,
  ,
-    [3, 28, "FREE", 49, 61],
+    [3, 29, "FREE", 47, 63],
 ,
-    [9, 17, 45, 55, 68]
+    [14, 21, 44, 59, 75]
   ];
 
   // 1. የመጀመሪያው ገጽ የሰዓት ቆጣሪ
@@ -49,7 +54,7 @@ function App() {
     }
   }, [timer, gameStarted]);
 
-  // 2. የሁለተኛው ገጽ ቁጥሮች ማውጫ
+  // 2. የሁለተኛው ገጽ ቁጥሮች በየ 4 ሰከንዱ የማውጫ ሎጅክ
   useEffect(() => {
     if (!isPlaying) return;
 
@@ -90,36 +95,65 @@ function App() {
   const rawPrize = soldCount * 10;
   const netPrize = rawPrize - (rawPrize * 0.20);
 
-  // 🔴 ማስተካከያ 2፦ ድጋሚ ሲነካ ምርጫውን ሙሉ በሙሉ የሚያጠፋ (Deselect) የተስተካከለ ፈንክሽን
   const handleSelectCartela = (num) => {
-    // ህግ 1፦ የመረጥከውን ቁጥር ራሱን ድጋሚ ከነካኸው ምርጫው ሙሉ በሙሉ ይጠፋል (Deselect)
     if (mySlot === num) {
-      setMySlot(null); // ባዶ ያደርገዋል
-      setBalance((prev) => prev + bet); // የተወራረደውን 10 ብር ይመልሳል
-      setSoldCount((prev) => prev - 1); // ከተሸጠው ላይ 1 ይቀንሳል
-      return; 
+      setMySlot(null); setBalance((prev) => prev + bet); setSoldCount((prev) => prev - 1); return; 
     }
-
-    // ህግ 2፦ ሌላ አዲስ ቁጥር ስትመርጥ የድሮውን አጥፍቶ በአዲሱ ይተካል
-    if (mySlot !== null) {
-      setBalance((prev) => prev + bet);
-      setSoldCount((prev) => prev - 1);
-    }
-
-    // ምርጫውን መመዝገብ
+    if (mySlot !== null) { setBalance((prev) => prev + bet); setSoldCount((prev) => prev - 1); }
     if (balance >= bet) {
-      setMySlot(num); 
-      setSoldCount((prev) => prev + 1);
-      setBalance((prev) => prev - bet);
+      setMySlot(num); setSoldCount((prev) => prev + 1); setBalance((prev) => prev - bet);
+    } else { alert("በቂ ሂሳብ የሎዎትም!"); }
+  };
+
+  const handleCellClick = (cellValue) => {
+    if (isBanned || cellValue === "FREE") return;
+
+    if (calledBalls.includes(cellValue)) {
+      if (!userHits.includes(cellValue)) {
+        setUserHits([...userHits, cellValue]);
+      }
     } else {
-      alert("በቂ ሂሳብ የሎዎትም!");
+      const nextWrong = wrongAttempts + 1;
+      setWrongAttempts(nextWrong);
+      
+      if (nextWrong >= 3) {
+        setIsBanned(true);
+        alert("🚨 ማሳሰቢያ፦ ያልተጠራ ቁጥር ደጋግመው 3 ጊዜ በመንካትዎ ካርቴላዎ ለዚህ ጨዋታ ታግዷል!");
+      } else {
+        alert(`⚠️ አልተጠራም! የተሳሳተ ሙከራ፡ ${nextWrong}/3`);
+      }
     }
   };
 
+  const checkBingoWin = () => {
+    if (isBanned) return;
+
+    for (let row of playingCartelaNumbers) {
+      if (row.every(cell => userHits.includes(cell))) return triggerWin();
+    }
+
+    for (let col = 0; col < 5; col++) {
+      let colMatch = true;
+      for (let row = 0; row < 5; row++) {
+        if (!userHits.includes(playingCartelaNumbers[row][col])) colMatch = false;
+      }
+      if (colMatch) return triggerWin();
+    }
+
+    alert("❌ ገና አልሰሩም! መስመርዎን በደንብ ያረጋግጡ።");
+  };
+
+  const triggerWin = () => {
+    setIsPlaying(false);
+    alert(`🎉🎉 እንኳን ደስ አለዎት! ቢንጎ ሰርተዋል። የ ${netPrize} ETB ድራሽ አሸናፊ ሆነዋል! 🏆`);
+  };
+
+  // ==========================================
+  // 🔵 ገጽ 2፦ የጨዋታው ሜዳ (GAME BOARD)
+  // ==========================================
   if (gameStarted) {
     return (
       <div className="app-container">
-        {/* 🎰 መጀመሪያና መጨረሻ ላይ የጌም ምልክትና Glow ያለው ርዕስ */}
         <h1 className="main-title-neon">🎰 ላዝ ቢንጎ 🎰</h1>
 
         <div className="top-info-grid">
@@ -152,7 +186,10 @@ function App() {
           </div>
         </div>
 
+        {/* 🔴 አዲሱ የግራና ቀኝ የጎንዮሽ አቀማመጥ ኮንቴይነር */}
         <div className="game-split-layout">
+          
+          {/* የግራ ክፍል፦ የቢንጎ 1-75 ሰሌዳ */}
           <div className="bingo-board-container left-side">
             {Object.entries(bingoBoardData).map(([letter, numbers]) => (
               <div key={letter} className="board-row">
@@ -171,18 +208,23 @@ function App() {
             ))}
           </div>
 
+          {/* የቀኝ ክፍል፦ የካርቴላ ማትሪክስ እና የቢንጎ ቁልፍ */}
           <div className="right-side">
             <div className="card-title-center">💳 PLAYING CARTELA {mySlot && `(#${mySlot})`}</div>
-            <div className="playing-card-matrix">
+            <div className={`playing-card-matrix ${isBanned ? 'banned-fade' : ''}`}>
               {['B', 'I', 'N', 'G', 'O'].map(letter => (
                 <div key={letter} className="matrix-header">{letter}</div>
               ))}
               {playingCartelaNumbers.map((row, rowIdx) => (
                 <React.Fragment key={rowIdx}>
                   {row.map((cell, colIdx) => {
-                    const isHit = calledBalls.includes(cell) || cell === "FREE";
+                    const isSelected = userHits.includes(cell) || cell === "FREE";
                     return (
-                      <div key={colIdx} className={`matrix-cell ${cell === "FREE" ? "free-cell" : ""} ${isHit ? "hit" : ""}`}>
+                      <div 
+                        key={colIdx} 
+                        className={`matrix-cell clickable-cell ${cell === "FREE" ? "free-cell" : ""} ${isSelected ? "hit" : ""}`}
+                        onClick={() => handleCellClick(cell)}
+                      >
                         {cell}
                       </div>
                     );
@@ -191,16 +233,21 @@ function App() {
               ))}
             </div>
 
-            <button className="bingo-btn-win" onClick={() => alert("ካርዱ እየተረጋገጠ ነው...")}>🏆 BINGO 🏆</button>
+            <button className="bingo-btn-win" disabled={isBanned} onClick={checkBingoWin}>
+              🏆 BINGO 🏆
+            </button>
           </div>
+
         </div>
       </div>
     );
   }
 
+  // ==========================================
+  // 🟢 ገጽ 1፦ የተረጋገጠው መነሻ ገጽ
+  // ==========================================
   return (
     <div className="app-container page-one-scaled">
-      {/* 🎰 መጀመሪያና መጨረሻ ላይ የጌም ምልክትና Glow ያለው ርዕስ */}
       <h1 className="main-title-neon">🎰 ላዝ ቢንጎ 🎰</h1>
 
       <div className="top-info-grid-p1">
@@ -235,21 +282,3 @@ function App() {
 
       <div className="selector-title-p1">ካርቴላ ይምረጡ (1 - 200)</div>
       <div className="cartela-grid-p1">
-        {totalCartelas.map((num) => {
-          const isMine = mySlot === num; 
-          return (
-            <button
-              key={num}
-              className={`cartela-cell-p1 ${isMine ? 'mine' : ''}`}
-              onClick={() => handleSelectCartela(num)}
-            >
-              {num}
-            </button>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
-export default App;
