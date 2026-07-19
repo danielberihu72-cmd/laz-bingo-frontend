@@ -5,8 +5,8 @@
 }
 
 body {
-    background-color: #0b0214;
-    color: #fff;
+    background-color: #0d0d0d;
+    color: #ffffff;
     font-family: 'Segoe UI', system-ui, sans-serif;
     display: flex;
     justify-content: center;
@@ -16,163 +16,140 @@ body {
 .app-container {
     width: 100%;
     max-width: 450px;
-    padding: 15px;
-    padding-bottom: 40px;
+    padding: 20px;
 }
 
-.header {
+.main-title {
     text-align: center;
-    margin-bottom: 15px;
-}
-
-.logo {
-    font-size: 26px;
-    font-weight: bold;
+    font-size: 28px;
     color: #ff3399;
-    text-shadow: 0 0 10px #ff3399;
-}
-
-.subtitle {
-    font-size: 14px;
-    color: #00ffcc;
-    margin-top: 5px;
-}
-
-.stats-container {
-    border: 2px solid #ff3399;
-    border-radius: 12px;
-    padding: 12px;
-    display: flex;
-    justify-content: space-between;
     margin-bottom: 20px;
-    background-color: rgba(255, 51, 153, 0.05);
+    text-shadow: 0 0 10px rgba(255, 51, 153, 0.5);
 }
 
-.stat-box {
-    text-align: center;
-    flex: 1;
-}
-
-.stat-title {
-    display: block;
-    font-size: 11px;
-    color: #a192ba;
-    margin-bottom: 3px;
-}
-
-.stat-value {
-    font-size: 15px;
-    font-weight: bold;
-}
-
-.card-title {
-    color: #ffcc00;
-    font-size: 14px;
-    margin-bottom: 8px;
-    font-weight: bold;
-}
-
-/* የካርቴላ መምረጫ ዲዛይን (1-200) */
-.cartela-selector {
+/* Top Stats Grid */
+.top-info-grid {
     display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    gap: 5px;
-    max-height: 120px;
-    overflow-y: auto;
-    background-color: #120524;
-    border: 1px solid #ff3399;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.info-box {
+    background-color: #1a1a1a;
+    border: 1px solid #333;
     border-radius: 8px;
-    padding: 10px;
-    margin-bottom: 20px;
-}
-
-.cartela-btn {
-    background-color: #250f44;
-    border: 1px solid #4a1f80;
-    color: #fff;
-    padding: 6px 0;
-    border-radius: 4px;
-    font-weight: bold;
-    cursor: pointer;
-    font-size: 13px;
-}
-
-.cartela-btn.active {
-    background: linear-gradient(135deg, #ff00ff, #00ffff);
-    border: none;
-    box-shadow: 0 0 8px #00ffff;
-}
-
-.bingo-card {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 6px;
-    background-color: #061624;
-    border: 2px solid #00ffff;
-    border-radius: 12px;
-    padding: 12px;
-    margin-bottom: 15px;
-    box-shadow: 0 0 15px rgba(0, 255, 255, 0.1);
-}
-
-.grid-header {
+    padding: 8px 4px;
     text-align: center;
-    font-weight: bold;
-    color: #ff3399;
-    font-size: 20px;
-    padding-bottom: 5px;
 }
 
-.grid-cell {
-    background-color: #0d233a;
-    border: 1px solid #1a3a5c;
-    border-radius: 6px;
-    text-align: center;
-    padding: 10px 0;
+.info-label {
+    display: block;
+    font-size: 10px;
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+
+.info-value {
     font-size: 16px;
     font-weight: bold;
-    color: #fff;
 }
 
-.free-cell {
-    background: linear-gradient(135deg, #ff00ff, #ff3399);
-    border-radius: 6px;
+/* Colors */
+.text-green { color: #00ff66; }
+.text-red { color: #ff3333; }
+.text-yellow { color: #ffcc00; }
+.text-cyan { color: #00ffff; }
+
+/* YOUR SLOT */
+.your-slot-container {
+    margin-bottom: 25px;
+}
+
+.slot-title {
+    display: block;
+    font-size: 12px;
     text-align: center;
-    padding: 12px 0;
-    font-size: 11px;
+    color: #888;
+    margin-bottom: 5px;
     font-weight: bold;
-    color: #fff;
-    display: flex;
-    justify-content: center;
-    align-items: center;
 }
 
-.timer-container {
-    text-align: center;
-    margin-bottom: 20px;
+.slot-box {
+    border: 2px dashed #ff3399;
+    border-radius: 10px;
+    min-height: 55px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px;
+    background-color: rgba(255, 51, 153, 0.02);
+}
+
+.placeholder-text {
+    color: #555;
+    font-size: 14px;
+}
+
+.selected-tag {
+    background-color: #ff3399;
+    color: white;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+/* Cartela Grid (1-200) */
+.selector-title {
     font-size: 14px;
     color: #e0e0e0;
+    margin-bottom: 10px;
+    text-align: center;
 }
 
-.timer-countdown {
-    color: #ff3333;
-    font-weight: bold;
-    animation: blink 1s infinite;
+.cartela-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+    max-height: 320px;
+    overflow-y: auto;
+    padding: 10px;
+    background-color: #111;
+    border-radius: 12px;
+    border: 1px solid #222;
 }
 
-.bingo-btn {
-    width: 100%;
-    background: linear-gradient(90deg, #ff00ff, #00ffff);
-    border: none;
-    border-radius: 25px;
+.cartela-cell {
+    background-color: #1f1f1f;
+    border: 2px solid #ff3333;
     color: #fff;
-    padding: 14px;
-    font-size: 18px;
+    padding: 12px 0;
+    font-size: 16px;
     font-weight: bold;
+    border-radius: 8px;
     cursor: pointer;
-    box-shadow: 0 4px 15px rgba(0, 255, 255, 0.3);
+    transition: all 0.2s;
 }
 
-@keyframes blink {
-    50% { opacity: 0.5; }
+.cartela-cell:hover {
+    transform: scale(1.05);
+}
+
+/* ሲመረጥ የሚሆን ከለር */
+.cartela-cell.mine {
+    background-color: #ff3399;
+    border-color: #00ffff;
+    box-shadow: 0 0 8px #ff3399;
+}
+
+/* ሲሸጥ (የማይንቀሳቀስ) የሚሆን ከለር */
+.cartela-cell.sold {
+    background-color: #333 !important;
+    border-color: #555 !important;
+    color: #777 !important;
+    cursor: not-allowed;
+    opacity: 0.5;
 }
