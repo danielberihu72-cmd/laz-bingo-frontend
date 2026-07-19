@@ -3,23 +3,21 @@ import './App.css';
 
 function App() {
   // --- የመጀመሪያው ገጽ መረጃዎች (States) ---
-  const [balance, setBalance] = useState(500); // ቀሪ ሂሳብ
-  const [bet, setBet] = useState(10); // ውርርድ
-  const [timer, setTimer] = useState(30); // የሰዓት ቆጣሪ (ከ30 ይጀምራል)
-  const [soldCount, setSoldCount] = useState(13); // የተሸጡ ካርቴላዎች ብዛት
-  const [mySlots, setMySlots] = useState([]); // ተጫዋቹ የገዛቸው ካርቴላዎች
-  const [gameStarted, setGameStarted] = useState(false); // ጨዋታው መጀመሩን መቆጣጠሪያ (መጀመሪያ false ነው!)
+  const [balance, setBalance] = useState(500); 
+  const [bet, setBet] = useState(10); 
+  const [timer, setTimer] = useState(30); 
+  const [soldCount, setSoldCount] = useState(13); 
+  const [mySlots, setMySlots] = useState([]); 
+  const [gameStarted, setGameStarted] = useState(false); 
 
   // --- የሁለተኛው ገጽ ጨዋታ መረጃዎች (States) ---
-  const [calledBalls, setCalledBalls] = useState([16, 28, 38, 43, 66]); // ለሙከራ አስቀድመው የበሩ ቁጥሮች
-  const [currentBall, setCurrentBall] = useState("I 28"); // አሁን የወጣው ዋና ኳስ
-  const [recentBalls, setRecentBalls] = useState(["I 28", "O 66", "N 43"]); // የቅርብ ጊዜ 3 ኳሶች
+  const [calledBalls, setCalledBalls] = useState([16, 28, 38, 43, 66]); 
+  const [currentBall, setCurrentBall] = useState("I 28"); 
+  const [recentBalls, setRecentBalls] = useState(["I 28", "O 66", "N 43"]); 
   const [isPlaying, setIsPlaying] = useState(false);
 
-  // ከ1 እስከ 200 የካርቴላ ቁጥሮች ማመንጫ
   const totalCartelas = Array.from({ length: 200 }, (_, i) => i + 1);
 
-  // የቢንጎ ሰሌዳ ቁጥሮች አወቃቀር (B:1-15, I:16-30, N:31-45, G:46-60, O:61-75)
   const bingoBoardData = {
     B: Array.from({ length: 15 }, (_, i) => i + 1),
     I: Array.from({ length: 15 }, (_, i) => i + 16),
@@ -28,15 +26,14 @@ function App() {
     O: Array.from({ length: 15 }, (_, i) => i + 61),
   };
 
-  // 🔴 ማስተካከያ 2፦ 5 በ 5 ሙሉ በሙሉ የተሟላ የቢንጎ ካርድ ቁጥሮች (ያለ ምንም መቆራረጥ!)
+  // ሙሉ 5 በ 5 የቢንጎ ካርድ ቁጥሮች
   const playingCartelaNumbers = [,
  ,
     [10, 21, "FREE", 49, 70],
 ,
-    [15, 25, 40, 55, 75]
+    [1, 19, 44, 58, 67]
   ];
 
-  // 1. የመጀመሪያው ገጽ የሰዓት ቆጣሪ ሎጅክ
   useEffect(() => {
     if (timer > 0 && !gameStarted) {
       const interval = setInterval(() => {
@@ -44,12 +41,11 @@ function App() {
       }, 1000);
       return () => clearInterval(interval);
     } else if (timer === 0 && !gameStarted) {
-      setGameStarted(true); // ሰዓቱ 0 ሲደርስ አውቶማቲክ ወደ ጨዋታ ሜዳ ያሻግራል
+      setGameStarted(true); 
       setIsPlaying(true);
     }
   }, [timer, gameStarted]);
 
-  // 2. የሁለተኛው ገጽ አውቶማቲክ የቢንጎ ቁጥሮች ማውጫ (በየ 4 ሰከንዱ)
   useEffect(() => {
     if (!isPlaying) return;
 
@@ -87,11 +83,9 @@ function App() {
     return () => clearInterval(gameInterval);
   }, [isPlaying]);
 
-  // የሽልማት ስሌት (ተጫዋቾች * 10 ብር) - 20% ታክስ ተቀንሶ
   const rawPrize = soldCount * 10;
   const netPrize = rawPrize - (rawPrize * 0.20);
 
-  // ካርቴላ መግዣ ፈንክሽን
   const handleSelectCartela = (num) => {
     if (mySlots.includes(num)) return;
     if (balance >= bet) {
@@ -141,39 +135,46 @@ function App() {
           </div>
         </div>
 
-        {/* መካከለኛ ክፍል፦ Playing Cartela (ሙሉ 5 በ 5 ማትሪክስ) */}
-        <div className="card-title-center">💳 PLAYING CARTELA {mySlots.length > 0 ? `(#${mySlots.join(', ')})` : ''}</div>
-        <div className="playing-card-matrix">
-          {['B', 'I', 'N', 'G', 'O'].map(letter => (
-            <div key={letter} className="matrix-header">{letter}</div>
-          ))}
-          {playingCartelaNumbers.flat().map((cell, idx) => {
-            const isHit = calledBalls.includes(cell) || cell === "FREE";
-            return (
-              <div key={idx} className={`matrix-cell ${cell === "FREE" ? "free-cell" : ""} ${isHit ? "hit" : ""}`}>
-                {cell}
+        {/* 🔴 ማስተካከያ፦ የግራ እና ቀኝ የጎንዮሽ አቀማመጥ (Flex Container) */}
+        <div className="game-split-layout">
+          
+          {/* የግራ ክፍል፦ የቢንጎ ሙሉ ሰሌዳ (1-75 ቁጥሮች በአምድ መልክ) */}
+          <div className="bingo-board-container left-side">
+            {Object.entries(bingoBoardData).map(([letter, numbers]) => (
+              <div key={letter} className="board-row">
+                <div className="board-letter-header">{letter}</div>
+                <div className="board-numbers-grid">
+                  {numbers.map((num) => {
+                    const isBallOut = calledBalls.includes(num);
+                    return (
+                      <div key={num} className={`board-number-cell ${isBallOut ? 'highlighted' : ''}`}>
+                        {num}
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
-            );
-          })}
-        </div>
+            ))}
+          </div>
 
-        {/* የቢንጎ ሙሉ ሰሌዳ (B-I-N-G-O ሰሌዳ ቁጥሮች በሙሉ) */}
-        <div className="bingo-board-container">
-          {Object.entries(bingoBoardData).map(([letter, numbers]) => (
-            <div key={letter} className="board-row">
-              <div className="board-letter-header">{letter}</div>
-              <div className="board-numbers-grid">
-                {numbers.map((num) => {
-                  const isBallOut = calledBalls.includes(num);
-                  return (
-                    <div key={num} className={`board-number-cell ${isBallOut ? 'highlighted' : ''}`}>
-                      {num}
-                    </div>
-                  );
-                })}
-              </div>
+          {/* የቀኝ ክፍል፦ የተጫዋቹ ካርቴላ (Playing Cartela) */}
+          <div className="right-side">
+            <div className="card-title-center">💳 PLAYING CARTELA</div>
+            <div className="playing-card-matrix">
+              {['B', 'I', 'N', 'G', 'O'].map(letter => (
+                <div key={letter} className="matrix-header">{letter}</div>
+              ))}
+              {playingCartelaNumbers.flat().map((cell, idx) => {
+                const isHit = calledBalls.includes(cell) || cell === "FREE";
+                return (
+                  <div key={idx} className={`matrix-cell ${cell === "FREE" ? "free-cell" : ""} ${isHit ? "hit" : ""}`}>
+                    {cell}
+                  </div>
+                );
+              })}
             </div>
-          ))}
+          </div>
+
         </div>
 
         <button className="bingo-btn-win" onClick={() => alert("ካርዱ እየተረጋገጠ ነው...")}>🏆 ቢንጎ! (አሸነፍኩ) 🏆</button>
@@ -182,50 +183,51 @@ function App() {
   }
 
   // ==========================================
-  // 🟢 ገጽ 1፦ መነሻ የካርቴላ መምረጫ ገጽ (ሙሉ በሙሉ ተመልሷል!)
+  // 🟢 ገጽ 1፦ መነሻ የካርቴላ መምረጫ ገጽ (መጠኑ እንዲጨምር የተደረገ)
   // ==========================================
   return (
-    <div className="app-container">
-      <h1 className="main-title">ላዝ ቢንጎ</h1>
+    <div className="app-container page-one-scaled">
+      {/* 🔴 777 Game Effect ርዕስ */}
+      <h1 className="main-title-777">🎰 777 ላዝ ቢንጎ 777 🎰</h1>
 
-      <div className="top-info-grid">
-        <div className="info-box">
-          <span className="info-label text-green">BALANCE</span>
-          <span className="info-value text-green">{balance}</span>
+      <div className="top-info-grid-p1">
+        <div className="info-box-p1">
+          <span className="info-label-p1 text-green">BALANCE</span>
+          <span className="info-value-p1 text-green">{balance}</span>
         </div>
-        <div className="info-box">
-          <span className="info-label text-red">BET</span>
-          <span className="info-value text-red">{bet}</span>
+        <div className="info-box-p1">
+          <span className="info-label-p1 text-red">BET</span>
+          <span className="info-value-p1 text-red">{bet}</span>
         </div>
-        <div className="info-box">
-          <span className="info-label text-yellow">TIME</span>
-          <span className="info-value text-yellow">{timer}⏱️</span>
+        <div className="info-box-p1">
+          <span className="info-label-p1 text-yellow">TIME</span>
+          <span className="info-value-p1 text-yellow">{timer}⏱️</span>
         </div>
-        <div className="info-box">
-          <span className="info-label text-cyan">SOLD</span>
-          <span className="info-value text-cyan">{soldCount}</span>
+        <div className="info-box-p1">
+          <span className="info-label-p1 text-cyan">SOLD</span>
+          <span className="info-value-p1 text-cyan">{soldCount}</span>
         </div>
       </div>
 
-      <div className="your-slot-container">
-        <span className="slot-title">YOUR SLOT</span>
-        <div className="slot-box">
+      <div className="your-slot-container-p1">
+        <span className="slot-title-p1">YOUR SLOT</span>
+        <div className="slot-box-p1">
           {mySlots.length > 0 ? (
-            mySlots.map(num => <span key={num} className="selected-tag">#{num}</span>)
+            mySlots.map(num => <span key={num} className="selected-tag-p1">#{num}</span>)
           ) : (
-            <span className="placeholder-text">+ ካርቴላ ይምረጡ</span>
+            <span className="placeholder-text-p1">+ ካርቴላ ይምረጡ</span>
           )}
         </div>
       </div>
 
-      <div className="selector-title">ካርቴላ ይምረጡ (1 - 200)</div>
-      <div className="cartela-grid">
+      <div className="selector-title-p1">ካርቴላ ይምረጡ (1 - 200)</div>
+      <div className="cartela-grid-p1">
         {totalCartelas.map((num) => {
           const isMine = mySlots.includes(num);
           return (
             <button
               key={num}
-              className={`cartela-cell ${isMine ? 'mine' : ''}`}
+              className={`cartela-cell-p1 ${isMine ? 'mine' : ''}`}
               onClick={() => handleSelectCartela(num)}
             >
               {num}
