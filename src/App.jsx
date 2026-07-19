@@ -18,7 +18,7 @@ function App() {
 
   const totalCartelas = Array.from({ length: 200 }, (_, i) => i + 1);
 
-  // 1-75 ቁጥሮችን በየፊደሉ መመደቢያ ሰሌዳ (B:1-15, I:16-30, N:31-45, G:46-60, O:61-75)
+  // 1-75 ቁጥሮችን በየፊደሉ መመደቢያ ሰሌዳ
   const bingoBoardData = {
     B: Array.from({ length: 15 }, (_, i) => i + 1),
     I: Array.from({ length: 15 }, (_, i) => i + 16),
@@ -27,13 +27,23 @@ function App() {
     O: Array.from({ length: 15 }, (_, i) => i + 61),
   };
 
-  // 🔴 100% ሙሉ በሙሉ የተሟላ የቢንጎ ካርድ ማትሪክስ (25ቱም ቁጥሮች ያለ ምንም ክፍተት ሙሉ በሙሉ ተጽፈዋል!)
-  const playingCartelaNumbers = [,
- ,
-    [14, 21, "FREE", 49, 62],
-,
-    [3, 30, 45, 46, 64]
-  ];
+  // 🔴 ፎርሙላ ማስተካከያ፡ 5x5 ማትሪክስ በፎርሙላ ማመንጫ (በፍጹም አይቆረጥም!)
+  const [playingCartelaNumbers, setPlayingCartelaNumbers] = useState([]);
+
+  useEffect(() => {
+    // ለእያንዳንዱ አምድ 5 ሙሉ ቁጥሮችን መመደብ
+    const B_column =;
+    const I_column =;
+    const N_column = [31, 34, "FREE", 40, 43]; // መካከለኛው FREE ነው
+    const G_column =;
+    const O_column =;
+
+    const matrix = [];
+    for (let i = 0; i < 5; i++) {
+      matrix.push([B_column[i], I_column[i], N_column[i], G_column[i], O_column[i]]);
+    }
+    setPlayingCartelaNumbers(matrix);
+  }, []);
 
   // 1. የመጀመሪያው ገጽ የሰዓት ቆጣሪ
   useEffect(() => {
@@ -157,7 +167,7 @@ function App() {
             ))}
           </div>
 
-          {/* የቀኝ ክፍል ካርቴላ - ምስል ላይ እንዳሳየኸኝ ፍጹም 5x5 አቀማመጥ */}
+          {/* የቀኝ ክፍል ካርቴላ - 5x5 አቀማመጥ */}
           <div className="right-side">
             <div className="card-title-center">💳 PLAYING CARTELA</div>
             <div className="playing-card-matrix">
