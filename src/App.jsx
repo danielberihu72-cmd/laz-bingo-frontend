@@ -33,7 +33,7 @@ function App() {
  ,
     [4, 21, "FREE", 49, 70],
 ,
-    [5, 22, 40, 52, 69]
+    [5, 22, 40, 52, 74]
   ];
 
   // 1. የመጀመሪያው ገጽ የሰዓት ቆጣሪ ሎጅክ
@@ -132,9 +132,9 @@ function App() {
         <div className="ball-caller-section">
           {/* 3 ትናንሽ የቅርብ ጊዜ ኳሶች ክበብ */}
           <div className="recent-balls-container">
-            <div className="small-ball-circle">{recentBalls[2] || '-'}</div>
-            <div className="small-ball-circle">{recentBalls[1] || '-'}</div>
             <div className="small-ball-circle">{recentBalls[0] || '-'}</div>
+            <div className="small-ball-circle">{recentBalls[1] || '-'}</div>
+            <div className="small-ball-circle">{recentBalls[2] || '-'}</div>
             <span className="recent-label">Recent</span>
           </div>
 
@@ -146,8 +146,8 @@ function App() {
           </div>
         </div>
 
-        {/* መካከለኛ ክፍል፦ Playing Cartela (የተጫዋቹ የቢንጎ ካርድ) */}
-        <div className="card-title-center">💳 PLAYING CARTELA {mySlots.length > 0 ? `(#${mySlots[0]})` : ''}</div>
+        {/* መካከለኛ ክፍል፦ Playing Cartela (የተጫዋች ካርድ ማትሪክስ) */}
+        <div className="card-title-center">💳 PLAYING CARTELA {mySlots.length > 0 ? `(#${mySlots.join(', ')})` : ''}</div>
         <div className="playing-card-matrix">
           {['B', 'I', 'N', 'G', 'O'].map(letter => (
             <div key={letter} className="matrix-header">{letter}</div>
