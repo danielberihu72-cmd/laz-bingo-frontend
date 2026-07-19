@@ -15,38 +15,36 @@ body {
 
 .app-container {
     width: 100%;
-    max-width: 480px; /* ስክሪኑ በደንብ እንዲሰፋ ከፍ ተደርጓል */
+    max-width: 480px;
     padding: 12px;
     display: flex;
     flex-direction: column;
 }
 
-/* 🎰 777 Title Effect */
 .main-title-777 {
     text-align: center;
-    font-size: 26px;
+    font-size: 24px;
     font-weight: 900;
     color: #ffcc00;
     text-shadow: 0 0 12px #ff3399, 0 0 4px #00ffff;
-    margin-bottom: 20px;
-    letter-spacing: 1px;
+    margin-bottom: 15px;
 }
 
-/* 🔴 አዲሱ የግራና ቀኝ የጎንዮሽ አቀማመጥ (Flex Split) */
+/* 🔴 አዲሱ የግራና ቀኝ የጎንዮሽ አቀማመጥ (Split Flex Layout) */
 .game-split-layout {
     display: flex;
-    gap: 10px;
+    gap: 12px;
     width: 100%;
     margin-bottom: 15px;
     align-items: flex-start;
 }
 
 .left-side {
-    flex: 1.1; /* የቁጥሮች ሰሌዳ ቦታ */
+    flex: 1; /* የ1-75 ቁጥሮች ሰሌዳ የሚቀመጥበት የግራ ጎን */
 }
 
 .right-side {
-    flex: 1.3; /* የካርቴላው ቦታ ሰፊ እንዲሆን */
+    flex: 1.4; /* የካርቴላው ሳጥን ሰፊ ቦታ እንዲያገኝ የቀኝ ጎን */
 }
 
 /* Top Info Grid */
@@ -123,6 +121,7 @@ body {
     border: 2px solid #ff3399;
     border-radius: 8px;
     padding: 6px;
+    margin-bottom: 12px;
 }
 .matrix-header { text-align: center; font-weight: bold; color: #00ffff; font-size: 14px; }
 .matrix-cell {
@@ -153,7 +152,7 @@ body {
 }
 .board-row { display: flex; flex-direction: column; align-items: center; gap: 2px; border-bottom: 1px solid #1a3a5c; padding-bottom: 4px; }
 .board-letter-header { font-weight: 900; color: #ff3399; font-size: 14px; }
-.board-numbers-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; }
+.board-numbers-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
 .board-number-cell {
     background-color: #0d233a;
     color: #444;
@@ -177,6 +176,7 @@ body {
     padding: 12px;
     font-size: 16px;
     font-weight: bold;
+    cursor: pointer;
 }
 
 /* ========================================== */
