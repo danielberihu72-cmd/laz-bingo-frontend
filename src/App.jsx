@@ -6,14 +6,14 @@ function App() {
   const [balance, setBalance] = useState(500); 
   const [bet, setBet] = useState(10); 
   const [timer, setTimer] = useState(30); 
-  const [soldCount, setSoldCount] = useState(13); 
+  const [soldCount, setSoldCount] = useState(88); // በምስሉ ላይ 88 ተጫዋች ስለሚል
   const [mySlots, setMySlots] = useState([]); 
   const [gameStarted, setGameStarted] = useState(false); 
 
   // --- የሁለተኛው ገጽ ጨዋታ መረጃዎች (States) ---
-  const [calledBalls, setCalledBalls] = useState([16, 28, 38, 43, 66]); // ለዲዛይን ማሳያ አስቀድመው የበሩ ቁጥሮች
-  const [currentBall, setCurrentBall] = useState("I 28"); 
-  const [recentBalls, setRecentBalls] = useState(["I 28", "O 66", "N 43"]); 
+  const [calledBalls, setCalledBalls] = useState([]); 
+  const [currentBall, setCurrentBall] = useState(null); 
+  const [recentBalls, setRecentBalls] = useState([]); 
   const [isPlaying, setIsPlaying] = useState(false);
 
   const totalCartelas = Array.from({ length: 200 }, (_, i) => i + 1);
@@ -27,15 +27,15 @@ function App() {
     O: Array.from({ length: 15 }, (_, i) => i + 61),
   };
 
-  // 🔴 5 በ 5 ሙሉ የቢንጎ ካርድ ቁጥሮች (ማትሪክስ)
+  // 🔴 ማስተካከያ 1፦ ምንም ክፍተት የሌለው 100% ሙሉ ባለ 5 ረድፍ የካርቴላ ቁጥሮች ማትሪክስ (ዳታ)
   const playingCartelaNumbers = [,
  ,
-    [10, 18, "FREE", 55, 62],
+    [5, 29, "FREE", 47, 63],
 ,
-    [14, 30, 45, 60, 75]
+    [9, 26, 41, 60, 69]
   ];
 
-  // 1. የመጀመሪያው ገጽ የሰዓት ቆጣሪ ሎጅክ
+  // 1. የመጀመሪያው ገጽ የሰዓት ቆጣሪ
   useEffect(() => {
     if (timer > 0 && !gameStarted) {
       const interval = setInterval(() => {
@@ -86,7 +86,7 @@ function App() {
     return () => clearInterval(gameInterval);
   }, [isPlaying]);
 
-  // የሽልማት ስሌት (ተጫዋቾች * 10 ብር) - 20% ታክስ ተቀንሶ
+  // የሽልማት ስሌት (88 ተጫዋቾች * 10 ብር = 880 ETB) - 20% ታክስ ተቀንሶ
   const rawPrize = soldCount * 10;
   const netPrize = rawPrize - (rawPrize * 0.20);
 
@@ -95,7 +95,6 @@ function App() {
     if (mySlots.includes(num)) return;
     if (balance >= bet) {
       setMySlots([...mySlots, num]);
-      setSoldCount((prev) => prev + 1);
       setBalance((prev) => prev - bet);
     } else {
       alert("በቂ ሂሳብ የሎዎትም!");
@@ -103,12 +102,15 @@ function App() {
   };
 
   // ==========================================
-  // 🔵 ገጽ 2፦ የጨዋታው ሜዳ (GAME BOARD)
+  // 🔵 ገጽ 2፦ የጨዋታው ሜዳ (GAME BOARD) - አንተ በሳልከው ስዕል መሠረት
   // ==========================================
   if (gameStarted) {
     return (
       <div className="app-container">
-        {/* የላይኛው መረጃ ክፍሎች */}
+        {/* 🎰 777 ርዕስ */}
+        <h1 className="main-title-777">🎰 777 ላዝ ቢንጎ 777 🎰</h1>
+
+        {/* የላይኛው መረጃ ክፍሎች (ድራሽ፣ ተጫዋቾች፣ Balls) */}
         <div className="top-info-grid">
           <div className="info-box border-magenta">
             <span className="info-label text-magenta">ድራሽ</span>
@@ -124,26 +126,26 @@ function App() {
           </div>
         </div>
 
-        {/* የኳስ ማውጫ ክበቦች ክፍል */}
+        {/* የኳስ ማውጫ ክበቦች ክፍል (Recent 3 ክበቦች + 1 ትልቅ ዋና ክበብ) */}
         <div className="ball-caller-section">
           <div className="recent-balls-container">
+            <span className="recent-label">Recent</span>
             <div className="small-ball-circle">{recentBalls[0] || '-'}</div>
             <div className="small-ball-circle">{recentBalls[1] || '-'}</div>
             <div className="small-ball-circle">{recentBalls[2] || '-'}</div>
-            <span className="recent-label">Recent</span>
           </div>
 
           <div className="main-ball-circle-container">
             <div className="main-ball-circle">
-              {currentBall || ' ዝግጁ '}
+              {currentBall || 'ዝግጁ'}
             </div>
           </div>
         </div>
 
-        {/* 🔴 አዲሱ የግራ እና ቀኝ የጎንዮሽ አቀማመጥ (Flex Container) */}
+        {/* 🔴 በሳልከው ስዕል መሠረት የግራ እና ቀኝ የጎንዮሽ አቀማመጥ (Split Layout) */}
         <div className="game-split-layout">
           
-          {/* የግራ ክፍል፦ የቢንጎ ሙሉ ሰሌዳ (1-75 ቁጥሮች ቀጥታ በአምድ መልክ) */}
+          {/* የግራ ክፍል፦ የቢንጎ ሙሉ ሰሌዳ (ከ1 እስከ 75 ቁጥሮች በአምድ መልክ) */}
           <div className="bingo-board-container left-side">
             {Object.entries(bingoBoardData).map(([letter, numbers]) => (
               <div key={letter} className="board-row">
@@ -162,24 +164,29 @@ function App() {
             ))}
           </div>
 
-          {/* የቀኝ ክፍል፦ የተጫዋቹ ካርቴላ (Playing Cartela) እና የቢንጎ ቁልፍ */}
+          {/* የቀኝ ክፍል፦ የተጫዋቹ የቢንጎ ካርቴላ (Playing Cartela) እና የቢንጎ ቁልፍ */}
           <div className="right-side">
-            <div className="card-title-center">💳 PLAYING CARTELA {mySlots.length > 0 ? `(#${mySlots.join(', ')})` : ''}</div>
+            <div className="card-title-center">💳 PLAYING CARTELA</div>
             <div className="playing-card-matrix">
               {['B', 'I', 'N', 'G', 'O'].map(letter => (
                 <div key={letter} className="matrix-header">{letter}</div>
               ))}
-              {playingCartelaNumbers.flat().map((cell, idx) => {
-                const isHit = calledBalls.includes(cell) || cell === "FREE";
-                return (
-                  <div key={idx} className={`matrix-cell ${cell === "FREE" ? "free-cell" : ""} ${isHit ? "hit" : ""}`}>
-                    {cell}
-                  </div>
-                );
-              })}
+              {playingCartelaNumbers.map((row, rowIdx) => (
+                <React.Fragment key={rowIdx}>
+                  {row.map((cell, colIdx) => {
+                    const isHit = calledBalls.includes(cell) || cell === "FREE";
+                    return (
+                      <div key={colIdx} className={`matrix-cell ${cell === "FREE" ? "free-cell" : ""} ${isHit ? "hit" : ""}`}>
+                        {cell}
+                      </div>
+                    );
+                  })}
+                </React.Fragment>
+              ))}
             </div>
 
-            <button className="bingo-btn-win" onClick={() => alert("ካርዱ እየተረጋገጠ ነው...")}>🏆 ቢንጎ! (አሸነፍኩ) 🏆</button>
+            {/* ከካርታው ስር የሚለጠፈው የቢንጎ ቁልፍ */}
+            <button className="bingo-btn-win" onClick={() => alert("ካርዱ እየተረጋገጠ ነው...")}>🏆 BINGO 🏆</button>
           </div>
 
         </div>
@@ -192,7 +199,6 @@ function App() {
   // ==========================================
   return (
     <div className="app-container page-one-scaled">
-      {/* 🔴 777 Game Effect ርዕስ */}
       <h1 className="main-title-777">🎰 777 ላዝ ቢንጎ 777 🎰</h1>
 
       <div className="top-info-grid-p1">
