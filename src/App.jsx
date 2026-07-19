@@ -8,7 +8,7 @@ function App() {
   const [timer, setTimer] = useState(30); 
   const [soldCount, setSoldCount] = useState(88); 
   
-  // 🔴 ማስተካከያ 1፦ አንድ ካርቴላ ብቻ እንዲመረጥ ከባዶ (null) ይጀምራል
+  // አንድ ካርቴላ ብቻ ለመቆጣጠር (ባዶ ከሆነ null ነው)
   const [mySlot, setMySlot] = useState(null); 
   const [gameStarted, setGameStarted] = useState(false); 
 
@@ -28,13 +28,22 @@ function App() {
     O: Array.from({ length: 15 }, (_, i) => i + 61),
   };
 
-  // 100% የተሟላ የቢንጎ ጨዋታ ማትሪክስ (25ቱም ቁጥሮች ያለ ምንም የኮድ መቆራረጥ እዚህ ተጽፈዋል!)
-  const playingCartelaNumbers = [,
- ,
-    [5, 29, "FREE", 47, 63],
-,
-    [2, 16, 44, 55, 75]
-  ];
+  // 100% የተሟላ የቢንጎ ጨዋታ ማትሪክስ (25ቱም ቁጥሮች ያለ ምንም ክፍተት እዚህ ተጭነዋል)
+  const [playingCartelaNumbers, setPlayingCartelaNumbers] = useState([]);
+
+  useEffect(() => {
+    const B_column =;
+    const I_column =;
+    const N_column = [35, 42, "FREE", 38, 44];
+    const G_column =;
+    const O_column =;
+
+    const matrix = [];
+    for (let i = 0; i < 5; i++) {
+      matrix.push([B_column[i], I_column[i], N_column[i], G_column[i], O_column[i]]);
+    }
+    setPlayingCartelaNumbers(matrix);
+  }, []);
 
   // 1. የመጀመሪያው ገጽ የሰዓት ቆጣሪ
   useEffect(() => {
@@ -90,15 +99,23 @@ function App() {
   const rawPrize = soldCount * 10;
   const netPrize = rawPrize - (rawPrize * 0.20);
 
-  // 🔴 ማስተካከያ 2፦ አንድ ካርቴላ ብቻ እንዲመርጥና ሲቀይር የድሮውን የሚያጠፋ ፈንክሽን
+  // 🔴 ማስተካከያ፦ ድጋሚ ሲነካ ምርጫውን የሚያጠፋ (Deselect) አዲስ የተስተካከለ ፈንክሽን
   const handleSelectCartela = (num) => {
-    // ቀድሞ የገዛው ካርቴላ ካለ፣ ገንዘቡን እና የሶልድ ብዛቱን መጀመሪያ ይመልሳል
+    // ህግ 1፦ ተጫዋቹ የራሱን የመረጠውን ቁጥር ድጋሚ ከነካው ምርጫው ሙሉ በሙሉ ይጠፋል (Deselect)
+    if (mySlot === num) {
+      setMySlot(null); // ባዶ ያደርገዋል
+      setBalance((prev) => prev + bet); // የተወራረደውን ብር ይመልሳል
+      setSoldCount((prev) => prev - 1); // የተሸጠውን ቁጥር በ1 ይቀንሳል
+      return; // ፈንክሽኑን እዚህ ላይ ያቆማል
+    }
+
+    // ህግ 2፦ ሌላ አዲስ ቁጥር ከተመረጠ የድሮውን አጥፍቶ በአዲሱ ይተካል
     if (mySlot !== null) {
       setBalance((prev) => prev + bet);
       setSoldCount((prev) => prev - 1);
     }
 
-    // አዲሱን ምርጫ ብቻ ይተካል
+    // አዲሱን ምርጫ መመዝገብ
     if (balance >= bet) {
       setMySlot(num); 
       setSoldCount((prev) => prev + 1);
@@ -111,8 +128,8 @@ function App() {
   if (gameStarted) {
     return (
       <div className="app-container">
-        {/* 🎰 ኮከብ የሌለው የጌም ኢፌክት ርዕስ */}
-        <h1 className="main-title-neon">ላዝ ቢንጎ</h1>
+        {/* 🎰 መጀመሪያና መጨረሻ ላይ የጌም ምልክት ያለው ርዕስ */}
+        <h1 className="main-title-neon">🎰 ላዝ ቢንጎ 🎰</h1>
 
         <div className="top-info-grid">
           <div className="info-box border-magenta">
@@ -132,9 +149,9 @@ function App() {
         <div className="ball-caller-section">
           <div className="recent-balls-container">
             <span className="recent-label">Recent</span>
-            <div className="small-ball-circle">{recentBalls[0] || '-'}</div>
-            <div className="small-ball-circle">{recentBalls[1] || '-'}</div>
-            <div className="small-ball-circle">{recentBalls[2] || '-'}</div>
+            <div className="small-ball-circle">{recentBalls || '-'}</div>
+            <div className="small-ball-circle">{recentBalls || '-'}</div>
+            <div className="small-ball-circle">{recentBalls || '-'}</div>
           </div>
 
           <div className="main-ball-circle-container">
@@ -192,8 +209,8 @@ function App() {
 
   return (
     <div className="app-container page-one-scaled">
-      {/* 🎰 ኮከብ የሌለው የጌም ኢፌክት ርዕስ */}
-      <h1 className="main-title-neon">ላዝ ቢንጎ</h1>
+      {/* 🎰 መጀመሪያና መጨረሻ ላይ የጌም ምልክት ያለው ርዕስ */}
+      <h1 className="main-title-neon">🎰 ላዝ ቢንጎ 🎰</h1>
 
       <div className="top-info-grid-p1">
         <div className="info-box-p1">
@@ -228,7 +245,7 @@ function App() {
       <div className="selector-title-p1">ካርቴላ ይምረጡ (1 - 200)</div>
       <div className="cartela-grid-p1">
         {totalCartelas.map((num) => {
-          const isMine = mySlot === num; // አንድ ነጠላ ቁጥር ብቻ ነው የሚበራው
+          const isMine = mySlot === num; 
           return (
             <button
               key={num}
