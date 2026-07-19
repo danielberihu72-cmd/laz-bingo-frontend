@@ -11,13 +11,14 @@ function App() {
   const [gameStarted, setGameStarted] = useState(false); 
 
   // --- የሁለተኛው ገጽ ጨዋታ መረጃዎች (States) ---
-  const [calledBalls, setCalledBalls] = useState([16, 28, 38, 43, 66]); 
+  const [calledBalls, setCalledBalls] = useState([16, 28, 38, 43, 66]); // ለዲዛይን ማሳያ አስቀድመው የበሩ ቁጥሮች
   const [currentBall, setCurrentBall] = useState("I 28"); 
   const [recentBalls, setRecentBalls] = useState(["I 28", "O 66", "N 43"]); 
   const [isPlaying, setIsPlaying] = useState(false);
 
   const totalCartelas = Array.from({ length: 200 }, (_, i) => i + 1);
 
+  // ከ1 እስከ 75 ያሉትን ቁጥሮች በየፊደሉ መመደቢያ (B:1-15, I:16-30, N:31-45, G:46-60, O:61-75)
   const bingoBoardData = {
     B: Array.from({ length: 15 }, (_, i) => i + 1),
     I: Array.from({ length: 15 }, (_, i) => i + 16),
@@ -26,14 +27,15 @@ function App() {
     O: Array.from({ length: 15 }, (_, i) => i + 61),
   };
 
-  // ሙሉ 5 በ 5 የቢንጎ ካርድ ቁጥሮች
+  // 🔴 5 በ 5 ሙሉ የቢንጎ ካርድ ቁጥሮች (ማትሪክስ)
   const playingCartelaNumbers = [,
  ,
-    [10, 21, "FREE", 49, 70],
+    [10, 18, "FREE", 55, 62],
 ,
-    [1, 19, 44, 58, 67]
+    [14, 30, 45, 60, 75]
   ];
 
+  // 1. የመጀመሪያው ገጽ የሰዓት ቆጣሪ ሎጅክ
   useEffect(() => {
     if (timer > 0 && !gameStarted) {
       const interval = setInterval(() => {
@@ -46,6 +48,7 @@ function App() {
     }
   }, [timer, gameStarted]);
 
+  // 2. የሁለተኛው ገጽ አውቶማቲክ የቢንጎ ቁጥሮች ማውጫ (በየ 4 ሰከንዱ)
   useEffect(() => {
     if (!isPlaying) return;
 
@@ -83,9 +86,11 @@ function App() {
     return () => clearInterval(gameInterval);
   }, [isPlaying]);
 
+  // የሽልማት ስሌት (ተጫዋቾች * 10 ብር) - 20% ታክስ ተቀንሶ
   const rawPrize = soldCount * 10;
   const netPrize = rawPrize - (rawPrize * 0.20);
 
+  // ካርቴላ መግዣ ፈንክሽን
   const handleSelectCartela = (num) => {
     if (mySlots.includes(num)) return;
     if (balance >= bet) {
@@ -135,10 +140,10 @@ function App() {
           </div>
         </div>
 
-        {/* 🔴 ማስተካከያ፦ የግራ እና ቀኝ የጎንዮሽ አቀማመጥ (Flex Container) */}
+        {/* 🔴 አዲሱ የግራ እና ቀኝ የጎንዮሽ አቀማመጥ (Flex Container) */}
         <div className="game-split-layout">
           
-          {/* የግራ ክፍል፦ የቢንጎ ሙሉ ሰሌዳ (1-75 ቁጥሮች በአምድ መልክ) */}
+          {/* የግራ ክፍል፦ የቢንጎ ሙሉ ሰሌዳ (1-75 ቁጥሮች ቀጥታ በአምድ መልክ) */}
           <div className="bingo-board-container left-side">
             {Object.entries(bingoBoardData).map(([letter, numbers]) => (
               <div key={letter} className="board-row">
@@ -157,9 +162,9 @@ function App() {
             ))}
           </div>
 
-          {/* የቀኝ ክፍል፦ የተጫዋቹ ካርቴላ (Playing Cartela) */}
+          {/* የቀኝ ክፍል፦ የተጫዋቹ ካርቴላ (Playing Cartela) እና የቢንጎ ቁልፍ */}
           <div className="right-side">
-            <div className="card-title-center">💳 PLAYING CARTELA</div>
+            <div className="card-title-center">💳 PLAYING CARTELA {mySlots.length > 0 ? `(#${mySlots.join(', ')})` : ''}</div>
             <div className="playing-card-matrix">
               {['B', 'I', 'N', 'G', 'O'].map(letter => (
                 <div key={letter} className="matrix-header">{letter}</div>
@@ -173,17 +178,17 @@ function App() {
                 );
               })}
             </div>
+
+            <button className="bingo-btn-win" onClick={() => alert("ካርዱ እየተረጋገጠ ነው...")}>🏆 ቢንጎ! (አሸነፍኩ) 🏆</button>
           </div>
 
         </div>
-
-        <button className="bingo-btn-win" onClick={() => alert("ካርዱ እየተረጋገጠ ነው...")}>🏆 ቢንጎ! (አሸነፍኩ) 🏆</button>
       </div>
     );
   }
 
   // ==========================================
-  // 🟢 ገጽ 1፦ መነሻ የካርቴላ መምረጫ ገጽ (መጠኑ እንዲጨምር የተደረገ)
+  // 🟢 ገጽ 1፦ መነሻ የካርቴላ መምረጫ ገጽ (ትልቅ መጠን የተደረገ)
   // ==========================================
   return (
     <div className="app-container page-one-scaled">
