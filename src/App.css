@@ -197,36 +197,48 @@ body {
     text-align: center;
     font-weight: bold;
 }
+
 .playing-card-matrix {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(6, auto); /* 🔴 ማስተካከያ፡ 5ቱንም የቁጥር ረድፎች ሙሉ በሙሉ እንዲያሳይ */
     gap: 5px;
     background-color: #120524;
     border: 2px solid #ff3399;
     border-radius: 10px;
     padding: 10px;
     margin-bottom: 15px;
+    height: auto; /* ከፍታው እንዳይታጠር አውቶማቲክ እንዲያድግ */
 }
+
 .matrix-header {
     text-align: center;
     font-weight: bold;
     color: #00ffff;
     font-size: 16px;
 }
+
 .matrix-cell {
     background-color: #250f44;
     border: 1px solid #4a1f80;
     border-radius: 5px;
     text-align: center;
-    padding: 8px 0;
-    font-size: 14px;
+    padding: 10px 0; /* ቁጥሮቹ በደንብ እንዲታዩ ከፍታውን ጨምረነዋል */
+    font-size: 15px;
     font-weight: bold;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 42px; /* ትንሹ ከፍታ ገደብ */
 }
+
 .matrix-cell.free-cell {
     background-color: #ff00ff;
     color: #fff;
     font-size: 10px;
 }
+
 /* ቁጥር ሲወጣለት ካርዱ ላይ የሚበራ ከለር */
 .matrix-cell.hit {
     background-color: #00ffff !important;
@@ -266,7 +278,7 @@ body {
 }
 .board-number-cell {
     background-color: #0d233a;
-    color: #555; /* ገና ያልወጡ ቁጥሮች ፈዘው ይቆያሉ */
+    color: #555;
     font-size: 11px;
     font-weight: bold;
     width: 22px;
