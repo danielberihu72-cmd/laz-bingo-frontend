@@ -6,14 +6,14 @@ function App() {
   const [balance, setBalance] = useState(500); 
   const [bet, setBet] = useState(10); 
   const [timer, setTimer] = useState(30); 
-  const [soldCount, setSoldCount] = useState(88); 
-  const [mySlot, setMySlot] = useState(null); 
+  const [soldCount, setSoldCount] = useState(89); // በምስሉ ላይ 89 ስለሚል
+  const [mySlot, setMySlot] = useState(23); // በምስሉ ላይ የመረጥከው #23 ስለሆነ
   const [gameStarted, setGameStarted] = useState(false); 
 
   // --- 🔵 ገጽ 2፦ የጨዋታው ሜዳ መረጃዎች ---
-  const [calledBalls, setCalledBalls] = useState([]); 
-  const [currentBall, setCurrentBall] = useState(null); 
-  const [recentBalls, setRecentBalls] = useState([]); 
+  const [calledBalls, setCalledBalls] = useState([6, 16]); // በምስሉ ላይ የነበሩት የወጡ ኳሶች
+  const [currentBall, setCurrentBall] = useState("B 6"); 
+  const [recentBalls, setRecentBalls] = useState(["B 6", "I 16"]); 
   const [isPlaying, setIsPlaying] = useState(false);
   
   // ተጫዋቹ የነካቸውን ቁጥሮች መቆጣጠሪያ
@@ -24,7 +24,6 @@ function App() {
 
   const totalCartelas = Array.from({ length: 200 }, (_, i) => i + 1);
 
-  // 1-75 ቁጥሮችን በየፊደሉ መመደቢያ (B:1-15, I:16-30, N:31-45, G:46-60, O:61-75)
   const bingoBoardData = {
     B: Array.from({ length: 15 }, (_, i) => i + 1),
     I: Array.from({ length: 15 }, (_, i) => i + 16),
@@ -33,12 +32,12 @@ function App() {
     O: Array.from({ length: 15 }, (_, i) => i + 61),
   };
 
-  // 🔴 100% ሙሉ በሙሉ የተሟላ የቢንጎ ካርድ ማትሪክስ (25ቱም ሳጥኖች አንድም ሳይጎድል ተጽፈዋል!)
+  // 🔴 100% ሙሉ በሙሉ የተሟላ ባለ 5 ረድፍ የቢንጎ ማትሪክስ (25ቱም ቁጥሮች አንድም ሳይጎድል ተጽፈዋል!)
   const playingCartelaNumbers = [,
  ,
-    [3, 29, "FREE", 47, 63],
+    [14, 21, "FREE", 38, 72],
 ,
-    [14, 21, 44, 59, 75]
+    [12, 25, 40, 58, 75]
   ];
 
   // 1. የመጀመሪያው ገጽ የሰዓት ቆጣሪ
@@ -186,10 +185,8 @@ function App() {
           </div>
         </div>
 
-        {/* 🔴 አዲሱ የግራና ቀኝ የጎንዮሽ አቀማመጥ ኮንቴይነር */}
         <div className="game-split-layout">
-          
-          {/* የግራ ክፍል፦ የቢንጎ 1-75 ሰሌዳ */}
+          {/* የግራ ክፍል ሰሌዳ */}
           <div className="bingo-board-container left-side">
             {Object.entries(bingoBoardData).map(([letter, numbers]) => (
               <div key={letter} className="board-row">
@@ -208,7 +205,7 @@ function App() {
             ))}
           </div>
 
-          {/* የቀኝ ክፍል፦ የካርቴላ ማትሪክስ እና የቢንጎ ቁልፍ */}
+          {/* የቀኝ ክፍል ካርቴላ */}
           <div className="right-side">
             <div className="card-title-center">💳 PLAYING CARTELA {mySlot && `(#${mySlot})`}</div>
             <div className={`playing-card-matrix ${isBanned ? 'banned-fade' : ''}`}>
@@ -237,7 +234,6 @@ function App() {
               🏆 BINGO 🏆
             </button>
           </div>
-
         </div>
       </div>
     );
@@ -282,3 +278,5 @@ function App() {
 
       <div className="selector-title-p1">ካርቴላ ይምረጡ (1 - 200)</div>
       <div className="cartela-grid-p1">
+        {totalCartelas.map((num) => {
+          const isMine = mySlot === num; 
