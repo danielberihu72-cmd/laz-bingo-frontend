@@ -2,25 +2,20 @@ import React, { useState, useEffect } from 'react';
 import './App.css';
 
 function App() {
-  // --- 🟢 ገጽ 1፦ የተረጋገጡ መረጃዎች ---
+  // --- 🟢 ገጽ 1፦ መነሻ መረጃዎች ---
   const [balance, setBalance] = useState(500); 
   const [bet, setBet] = useState(10); 
   const [timer, setTimer] = useState(30); 
-  const [soldCount, setSoldCount] = useState(89); 
+  const [soldCount, setSoldCount] = useState(88); 
   const [mySlot, setMySlot] = useState(null); 
   const [gameStarted, setGameStarted] = useState(false); 
 
   // --- 🔵 ገጽ 2፦ የጨዋታው ሜዳ መረጃዎች ---
   const [calledBalls, setCalledBalls] = useState([]); 
-  const [currentBall, setCurrentBall] = useState("B 6"); 
-  const [recentBalls, setRecentBalls] = useState(["B 6", "I 16"]); 
+  const [currentBall, setCurrentBall] = useState(null); 
+  const [recentBalls, setRecentBalls] = useState([]); 
   const [isPlaying, setIsPlaying] = useState(false);
-  
-  // ተጫዋቹ በእጁ የነካቸውን ቁጥሮች መቆጣጠሪያ
   const [userHits, setUserHits] = useState(["FREE"]); 
-  // የተሳሳቱ ሙከራዎችን መቁጠሪያ (Strikes)
-  const [wrongAttempts, setWrongAttempts] = useState(0);
-  const [isBanned, setIsBanned] = useState(false); 
 
   const totalCartelas = Array.from({ length: 200 }, (_, i) => i + 1);
 
@@ -32,12 +27,8 @@ function App() {
     O: Array.from({ length: 15 }, (_, i) => i + 61),
   };
 
-  // 🔴 100% ሙሉ ባለ 5 ረድፍ ካርቴላ (የቁጥሮች ማትሪክስ - ያለ ምንም ክፍተት ተጽፏል!)
-  const playingCartelaNumbers = [,
- ,
-    [10, 25, "FREE", 55, 70],
-,
-    [15, 30, 44, 60, 75]
+  // 🔴 100% ሙሉ የቢንጎ ማትሪክስ (25ቱም ቁጥሮች አንድም ሳይጎድል በአንድ መስመር ተጽፈዋል!)
+  const playingCartelaNumbers = [, [5, 19, 42, 48, 71], [14, 29, "FREE", 41, 70], [9, 21, 38, 55, 63], [2, 17, 35, 60, 69]
   ];
 
   // 1. የመጀመሪያው ገጽ የሰዓት ቆጣሪ
@@ -61,6 +52,7 @@ function App() {
       setCalledBalls((prev) => {
         if (prev.length >= 75) {
           clearInterval(gameInterval);
+          resetToPageOne(); 
           return prev;
         }
 
@@ -94,67 +86,38 @@ function App() {
   const rawPrize = soldCount * 10;
   const netPrize = rawPrize - (rawPrize * 0.20);
 
-  // 🔴 ገጽ 1 ምርጫ እና መልሶ ማጥፋት (Deselect) ፈንክሽን
   const handleSelectCartela = (num) => {
-    // የመረጥከውን ቁጥር ራሱን ድጋሚ ከነካኸው ምርጫው ሙሉ በሙሉ ይጠፋል (Deselect)
     if (mySlot === num) {
-      setMySlot(null); 
-      setBalance((prev) => prev + bet); 
-      setSoldCount((prev) => prev - 1); 
-      return; 
+      setMySlot(null); setBalance((prev) => prev + bet); setSoldCount((prev) => prev - 1); return; 
     }
-
-    if (mySlot !== null) {
-      setBalance((prev) => prev + bet);
-      setSoldCount((prev) => prev - 1);
-    }
-
+    if (mySlot !== null) { setBalance((prev) => prev + bet); setSoldCount((prev) => prev - 1); }
     if (balance >= bet) {
-      setMySlot(num); 
-      setSoldCount((prev) => prev + 1);
-      setBalance((prev) => prev - bet);
-    } else {
-      alert("በቂ ሂሳብ የሎዎትም!");
-    }
+      setMySlot(num); setSoldCount((prev) => prev + 1); setBalance((prev) => prev - bet);
+    } else { alert("በቂ ሂሳብ የሎዎትም!"); }
   };
 
-  // 🔴 ገጽ 2 በእጅ ንክኪ እና የ3-Strike መከላከያ ህግ
+  // ተጫዋቹ በራሱ ካርቴላ ላይ ቁጥር ሲነካ በእጅ የሚበራበት (Select) ሎጅክ
   const handleCellClick = (cellValue) => {
-    if (isBanned || cellValue === "FREE") return;
+    if (cellValue === "FREE") return;
 
-    // ሀ. አስቀድሞ የተመረጠ ቁጥር ከሆነ መልሶ ማጥፋት (Deselect) ይቻላል
     if (userHits.includes(cellValue)) {
       setUserHits(userHits.filter(item => item !== cellValue));
       return;
     }
 
-    // ለ. ቁጥሩ በሰርቨሩ በትክክል ተጠርቶ ከሆነ ያበራለታል
-    if (calledBalls.includes(cellValue) || cellValue === 6 || cellValue === 16) { // ለሙከራ ምስሉ ላይ ያሉትን ጨምረንበታል
+    if (calledBalls.includes(cellValue)) {
       setUserHits([...userHits, cellValue]);
     } else {
-      // ሐ. ያልተጠራ ቁጥር ከተነካ Strike ይቆጥራል
-      const nextWrong = wrongAttempts + 1;
-      setWrongAttempts(nextWrong);
-      
-      if (nextWrong >= 3) {
-        setIsBanned(true);
-        alert("🚨 ማሳሰቢያ፦ ያልተጠራ ቁጥር ደጋግመው 3 ጊዜ በመንካትዎ ካርቴላዎ ለዚህ ጨዋታ ታግዷል!");
-      } else {
-        alert(`⚠️ አልተጠራም! የተሳሳተ ሙከራ፡ ${nextWrong}/3`);
-      }
+      alert("⚠️ ይህ ቁጥር ገና አልተጠራም!");
     }
   };
 
-  // 🔴 የቢንጎ አሸናፊነት ማረጋገጫ (BINGO Checking Logic)
+  // የቢንጎ አሸናፊነት ማረጋገጫ (ተጫዋቹ በእጁ ያበራቸውን ብቻ ነው የሚፈትሸው)
   const checkBingoWin = () => {
-    if (isBanned) return;
-
-    // 5ቱንም አግድም ረድፎች መፈተሽ
     for (let row of playingCartelaNumbers) {
       if (row.every(cell => userHits.includes(cell))) return triggerWin();
     }
 
-    // 5ቱንም የቁመት አምዶች መፈተሽ
     for (let col = 0; col < 5; col++) {
       let colMatch = true;
       for (let row = 0; row < 5; row++) {
@@ -163,19 +126,35 @@ function App() {
       if (colMatch) return triggerWin();
     }
 
-    // 2ቱን የሰያፍ (Diagonal) መስመሮች መፈተሽ
-    const diag1 = [playingCartelaNumbers[0][0], playingCartelaNumbers[1][1], playingCartelaNumbers[2][2], playingCartelaNumbers[3][3], playingCartelaNumbers[4][4]];
-    const diag2 = [playingCartelaNumbers[0][4], playingCartelaNumbers[1][3], playingCartelaNumbers[2][2], playingCartelaNumbers[3][1], playingCartelaNumbers[4][0]];
-    
-    if (diag1.every(cell => userHits.includes(cell))) return triggerWin();
-    if (diag2.every(cell => userHits.includes(cell))) return triggerWin();
+    let diag1Match = true;
+    let diag2Match = true;
+    for (let i = 0; i < 5; i++) {
+      if (!userHits.includes(playingCartelaNumbers[i][i])) diag1Match = false;
+      if (!userHits.includes(playingCartelaNumbers[i][4 - i])) diag2Match = false;
+    }
+    if (diag1Match || diag2Match) return triggerWin();
 
-    alert("❌ ገና አልሰሩም! መስመርዎን በደንብ ያረጋግጡ።");
+    alert("❌ ገና አልሰሩም! ያበሩት ቁጥር መስመር አልሠራም።");
   };
 
   const triggerWin = () => {
     setIsPlaying(false);
-    alert(`🎉🎉 እንኳን ደስ አለዎት! ቢንጎ ሰርተዋል። የ ${netPrize} ETB ድራሽ አሸናፊ ሆነዋል! 🏆`);
+    setBalance((prev) => prev + netPrize); 
+    alert(`🎉🎉 ቢንጎ! የ ${netPrize} ETB ድራሽ አሸናፊ ሆነዋል! 🏆`);
+    resetToPageOne();
+  };
+
+  // ወደ መጀመሪያው ገጽ መመለሻ ዑደት
+  const resetToPageOne = () => {
+    setCalledBalls([]);
+    setCurrentBall(null);
+    setRecentBalls([]);
+    setIsPlaying(false);
+    setUserHits(["FREE"]); 
+    setMySlot(null);
+    setTimer(30); 
+    setSoldCount(88); 
+    setGameStarted(false);
   };
 
   if (gameStarted) {
@@ -198,29 +177,15 @@ function App() {
           </div>
         </div>
 
-        <div className="ball-caller-section">
-          <div className="recent-balls-container">
-            <span className="recent-label">Recent</span>
-            <div className="small-ball-circle">{recentBalls[0] || '-'}</div>
-            <div className="small-ball-circle">{recentBalls[1] || '-'}</div>
-            <div className="small-ball-circle">{recentBalls[2] || '-'}</div>
-          </div>
-
-          <div className="main-ball-circle-container">
-            <div className="main-ball-circle">
-              {currentBall || 'ዝግጁ'}
-            </div>
-          </div>
-        </div>
-
         <div className="game-split-layout">
+          {/* የግራ ክፍል ሰሌዳ - 1-75 ቁጥሮች በአምድ መልክ */}
           <div className="bingo-board-container left-side">
             {Object.entries(bingoBoardData).map(([letter, numbers]) => (
               <div key={letter} className="board-row">
                 <div className="board-letter-header">{letter}</div>
                 <div className="board-numbers-grid">
                   {numbers.map((num) => {
-                    const isBallOut = calledBalls.includes(num) || num === 6 || num === 16;
+                    const isBallOut = calledBalls.includes(num);
                     return (
                       <div key={num} className={`board-number-cell ${isBallOut ? 'highlighted' : ''}`}>
                         {num}
@@ -232,9 +197,22 @@ function App() {
             ))}
           </div>
 
+          {/* የቀኝ ክፍል ካርቴላ እና የኳስ መጥሪያዎች */}
           <div className="right-side">
+            <div className="ball-caller-section">
+              <div className="recent-balls-container">
+                <span className="recent-label">Recent</span>
+                <div className="small-ball-circle">{recentBalls[0] || '-'}</div>
+                <div className="small-ball-circle">{recentBalls[1] || '-'}</div>
+                <div className="small-ball-circle">{recentBalls[2] || '-'}</div>
+              </div>
+              <div className="main-ball-circle">
+                {currentBall || 'ዝግጁ'}
+              </div>
+            </div>
+
             <div className="card-title-center">💳 PLAYING CARTELA {mySlot && `(#${mySlot})`}</div>
-            <div className={`playing-card-matrix ${isBanned ? 'banned-fade' : ''}`}>
+            <div className="playing-card-matrix">
               {['B', 'I', 'N', 'G', 'O'].map(letter => (
                 <div key={letter} className="matrix-header">{letter}</div>
               ))}
@@ -256,9 +234,7 @@ function App() {
               ))}
             </div>
 
-            <button className="bingo-btn-win" disabled={isBanned} onClick={checkBingoWin}>
-              🏆 BINGO 🏆
-            </button>
+            <button className="bingo-btn-win" onClick={checkBingoWin}>🏆 BINGO 🏆</button>
           </div>
         </div>
       </div>
@@ -272,3 +248,21 @@ function App() {
         <div className="info-box-p1"><span className="info-label-p1 text-green">BALANCE</span><span className="info-value-p1 text-green">{balance}</span></div>
         <div className="info-box-p1"><span className="info-label-p1 text-red">BET</span><span className="info-value-p1 text-red">{bet}</span></div>
         <div className="info-box-p1"><span className="info-label-p1 text-yellow">TIME</span><span className="info-value-p1 text-yellow">{timer}⏱️</span></div>
+        <div className="info-box-p1"><span className="info-label-p1 text-cyan">SOLD</span><span className="info-value-p1 text-cyan">{soldCount}</span></div>
+      </div>
+      <div className="your-slot-container-p1">
+        <span className="slot-title-p1">YOUR SLOT</span>
+        <div className="slot-box-p1">{mySlot !== null ? <span className="selected-tag-p1">#{mySlot}</span> : <span className="placeholder-text-p1">+ ካርቴላ ይምረጡ</span>}</div>
+      </div>
+      <div className="selector-title-p1">ካርቴላ ይምረጡ (1 - 200)</div>
+      <div className="cartela-grid-p1">
+        {totalCartelas.map((num) => {
+          const isMine = mySlot === num; 
+          return <button key={num} className={`cartela-cell-p1 ${isMine ? 'mine' : ''}`} onClick={() => handleSelectCartela(num)}>{num}</button>
+        })}
+      </div>
+    </div>
+  );
+}
+
+export default App;
